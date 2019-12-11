@@ -1,35 +1,71 @@
 import React from 'react';
+import { TextField, FloatingActionButton } from 'material-ui';
+import SendIcon from 'material-ui/svg-icons/content/send';
 import Message from './Message.jsx';
+import '../styles/styles.css';
 
 export default class MessageField extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {messages: ["Привет!", "Как дела?"]};
+        this.state = {messages: [{ text: "Привет!", sender: 'bot' }, { text: "Как дела?", sender: 'bot' }],},
+        this.input = '';
     }
-    //state = {
-    //   messages: ["Привет!", "Как дела?"]
-    //};
-
-    handleClick() {
-       this.setState({ messages: [ ...this.state.messages, 'Нормально' ] });
-    };
 
     componentDidUpdate() {
-        if (this.state.messages.length % 2 === 1) {  // Остаток от деления на 2
+        if (this.state.messages[this.state.messages.length - 1].sender === 'me') {
             setTimeout(() =>
-            this.setState(
-                { messages: [ ...this.state.messages, 'Не приставай ко мне, я робот!' ] }),
-            1000);
+                    this.setState({
+                        messages: [ ...this.state.messages, {text: 'Не приставай ко мне, я робот!', sender: 'bot'} ] }),
+                1000);
         }
     }
  
-    render() {
-        const messageElements = this.state.messages.map((text, index) => (
-           <Message key={ index } text={ text } />));
+    handleClick(message) {
+        this.sendMessage(message)
+    };
 
-        return <div>
-           { messageElements }
-           <button onClick={ this.handleClick.bind(this) }>Отправить сообщение</button>
-        </div>
+    handleChange(event) {
+        this.setState({ [event.target.name]: event.target.value });
+     };
+
+    handleKeyUp(event, message) {
+        if (event.keyCode === 13) { // Enter
+            this.sendMessage(message)
+        }
+     };
+
+     sendMessage(message) {
+        this.setState({
+            messages: [ ...this.state.messages, {text: message, sender: 'me'} ],
+            input: '',
+        });
+     };
+ 
+ 
+    render() {
+        const messageElements = this.state.messages.map((message, index) => (
+            <Message key={ index } text={ message.text } sender={ message.sender } />));
+
+            return <div className="layout">
+            <div className=""></div>    
+            <div className="message-field">
+                { messageElements }
+            </div>
+            <div style={ { width: '100%', display: 'flex' } }>
+               <TextField
+                   name="input"
+                   fullWidth={ true }
+                   hintText="Введите сообщение"
+                   style={ { fontSize: '22px' } }
+                   onChange={ this.handleChange.bind(this) }
+                   value={ this.state.input }
+                   onKeyUp={ (event) => this.handleKeyUp(event, this.state.input).bind(this) }
+               />
+               <FloatingActionButton onClick={ () => this.handleClick(this.state.input).bind(this) }>
+                   <SendIcon />
+               </FloatingActionButton>
+           </div>
+         </div>
+     
     }
 }
