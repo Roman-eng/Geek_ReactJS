@@ -1,14 +1,21 @@
 import React from 'react';
 import { TextField, FloatingActionButton } from 'material-ui';
 import SendIcon from 'material-ui/svg-icons/content/send';
-import Message from './Message';
+import Message from './Message.jsx';
 import '../styles/styles.css';
 
 export default class MessageField extends React.Component {
-    state = {
-        messages: [{ text: "Привет!", sender: 'bot' }, { text: "Как дела?", sender: 'bot' }],
-        input: '',
-    };
+    constructor(props) {
+        super(props);
+        this.handleClick = this.handleClick.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleKeyUp = this.handleKeyUp.bind(this);
+        this.sendMessage = this.sendMessage.bind(this);
+        this.state = {
+            messages: [{ text: "Привет!", sender: 'bot' }, { text: "Как дела?", sender: 'bot' }],
+            input: '',
+    }
+}
 
     componentDidUpdate(prevProps, prevState) {
         if (prevState.messages.length < this.state.messages.length &&
@@ -20,21 +27,21 @@ export default class MessageField extends React.Component {
         }
     }
 
-    handleClick = (message) => {
+    handleClick(message) {
         this.sendMessage(message)
     };
 
-    handleChange = (event) => {
+    handleChange(event) {
         this.setState({ [event.target.name]: event.target.value });
     };
 
-    handleKeyUp = (event, message) => {
+    handleKeyUp(event, message) {
         if (event.keyCode === 13) { // Enter
             this.sendMessage(message)
         }
     };
 
-    sendMessage = (message) => {
+    sendMessage(message) {
         this.setState({
             messages: [ ...this.state.messages, {text: message, sender: 'me'} ],
             input: '',
