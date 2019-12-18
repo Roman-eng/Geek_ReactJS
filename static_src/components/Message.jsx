@@ -3,10 +3,7 @@ import PropTypes from 'prop-types';
 
 export default class Message extends React.Component {
 
-
-
-
-   render() {
+    render() {
        return (
            <div
                className="message"
