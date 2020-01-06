@@ -11,28 +11,46 @@ module.exports = {
        filename: 'app.js',
    },
 
-   devServer: {
-        port: 8080,
-        historyApiFallback: {
-        index: 'index.html'
-        }
-    },
+   watch: process.argv[process.argv.length - 1] === 'development',
 
    module: {
-    rules: [
-        {
-            test: /\.(js|jsx)$/,
-            include: path.resolve(__dirname, "static_src"),
-            loader: 'babel-loader',
-            exclude: /node_modules/,
-            options: {
-                presets: ['@babel/env', '@babel/react'],
-            },
-        },
-        {
-            test: /\.css$/,
-            loader: 'style-loader!css-loader',
-        },
-    ],
-},
+       rules: [
+           {
+               test: /\.(js|jsx)$/,
+               include: path.resolve(__dirname, "static_src"),
+               loader: 'babel-loader',
+               exclude: /node_modules/,
+               options: {
+                   presets: ['@babel/env', '@babel/react'],
+                   plugins: [
+                       [
+                           "@babel/plugin-proposal-class-properties",
+                           {
+                               "loose": true
+                           }
+                       ]
+                   ]
+
+               }
+           },
+           {
+               test: /\.css$/,
+               loader: 'style-loader!css-loader',
+           },
+       ],
+   },
+
+    resolve: {
+       modules: [`${__dirname}/static_src`, 'node_modules'],
+       extensions: ['.js', '.jsx'],
+    },
+
+    devServer: {
+      port: 8080,
+      historyApiFallback: {
+          index: 'index.html'
+      }
+    },
+
+    devtool: 'cheap-inline-module-source-map',
 };
